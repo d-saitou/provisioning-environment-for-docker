@@ -26,4 +26,6 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--vram", "32", "--clipboard", "bidirectional", "--draganddrop", "bidirectional"]
   end
 
+  config.vm.provision "shell", inline: "/bin/bash /home/vagrant/sync/provision.sh"
+
 end
