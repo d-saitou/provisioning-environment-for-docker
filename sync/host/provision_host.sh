@@ -12,6 +12,7 @@ readonly NG=1
 readonly BASE_DIR="$(dirname "${0}")"
 readonly LOG_DIR="${HOME}/provision"
 readonly LOG_FILE="${LOG_DIR}/provision.$(date +"%Y%m%d%H%M%S").log"
+readonly PLAYBOOK_DIR="${BASE_DIR}/ansible"
 
 function print_log() {
   printf "$(date +"%Y-%m-%d %T") ${@}\n"
@@ -24,7 +25,7 @@ function print_label() {
 #######################################
 # Provision host OS.
 # Globals:
-#   OK, NG
+#   PLAYBOOK_DIR, OK, NG
 # Arguments:
 #   None
 # Returns:
@@ -33,7 +34,7 @@ function print_label() {
 function provision() {
   local rc
 
-  if [[ ! -e /usr/bin/ansible ]]; then
+  if [[ ! -e /usr/bin/ansible && ! -e /usr/local/bin/ansible ]]; then
     print_label 'update package list'
     apt-get -q update
     [[ ${?} -ne ${OK} ]] && return ${NG}
@@ -50,6 +51,13 @@ function provision() {
     pip3 install ansible
     [[ ${?} -ne ${OK} ]] && return ${NG}
   fi
+
+  print_label 'provision host'
+  cd ${PLAYBOOK_DIR}
+  ansible-playbook -i hosts -l app-group site.yml
+  rc=${?}
+  cd - >/dev/null
+  [[ ${rc} -ne ${OK} ]] && return ${NG}
 
   return ${OK}
 }

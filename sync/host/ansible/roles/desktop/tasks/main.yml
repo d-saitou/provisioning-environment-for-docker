@@ -1,0 +1,8 @@
+---
+- name: install desktop
+  apt:
+    name: ubuntu-desktop
+    update_cache: yes
+  #notify:
+  #  - reboot server
+  tags: [ 'desktop' ]

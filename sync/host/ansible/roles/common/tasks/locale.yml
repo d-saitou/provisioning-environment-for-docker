@@ -1,0 +1,15 @@
+---
+- name: install language-pack-ja
+  apt:
+    name: '{{ locale.package }}'
+    update_cache: yes
+  tags: [ 'common' ]
+
+- name: create locale
+  locale_gen:
+    name: '{{ locale.lang }}'
+  tags: [ 'common' ]
+
+- name: change locale
+  command: 'update-locale LANG={{ locale.lang }}'
+  tags: [ 'common' ]

@@ -1,0 +1,7 @@
+---
+- name: Provision development environment
+  hosts: development
+  become: true
+  roles:
+    - common
+    #- desktop
