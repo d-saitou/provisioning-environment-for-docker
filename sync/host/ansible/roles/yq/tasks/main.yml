@@ -1,0 +1,13 @@
+---
+- name: check exists yq
+  stat: path='/usr/local/bin/yq'
+  register: is_yq
+  tags: [ 'yq' ]
+
+- name: install yq
+  pip:
+    name: yq
+    executable: pip3
+    state: latest
+  when: not is_yq.stat.exists
+  tags: [ 'yq' ]

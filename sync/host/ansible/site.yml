@@ -6,3 +6,5 @@
     - common
     #- desktop
     - docker
+    - jq
+    - yq

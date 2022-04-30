@@ -1,0 +1,12 @@
+---
+- name: check exists jq
+  stat: path='/usr/bin/jq'
+  register: is_jq
+  tags: [ 'jq' ]
+
+- name: install jq
+  apt:
+    name: jq
+    state: present
+  when: not is_jq.stat.exists
+  tags: [ 'jq' ]
