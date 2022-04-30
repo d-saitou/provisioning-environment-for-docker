@@ -1,0 +1,37 @@
+services:
+
+  dbserver:
+    image: mysql:8.0
+    container_name: dbserver
+    hostname: dbserver
+    #restart: always
+    stdin_open: false
+    tty: true
+    command: --default-authentication-plugin=mysql_native_password
+    env_file:
+      - ./dbserver/mysql.env
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - mysql-log:/var/log/mysql
+      - ./dbserver/initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./dbserver/conf.d:/etc/mysql/conf.d:ro
+    #configs:
+    #  - source: my_cnf
+    #    target: /etc/mysql/conf.d/my.cnf
+    #    mode: 0440
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  mysql-log:
+
+#configs:
+#  my_cnf:
+#    file: ./dbserver/conf.d/my.cnf

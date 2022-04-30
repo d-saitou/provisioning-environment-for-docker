@@ -1,0 +1,12 @@
+mysql:
+  # *If MYSQL_RANDOM_ROOT_PASSWORD is set to "yes", the password will be displayed on the standard output.
+  #MYSQL_RANDOM_ROOT_PASSWORD: yes
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_USER: example
+  MYSQL_PASSWORD: example
+  MYSQL_DATABASE: example
+
+application:
+  name: spring-mvc-example
+  git_url: https://github.com/d-saitou/spring-mvc-example.git
+  init_db_dir: ./data/db

@@ -1,0 +1,15 @@
+[mysqld]
+skip-host-cache
+skip-name-resolve
+character-set-server = utf8
+#explicit_defaults_for_timestamp = true
+general-log-file = /var/log/mysql/mysqld.log
+default-time-zone = '{{ timezone }}'
+
+[client]
+default-character-set = utf8
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet = 16M
