@@ -1,3 +1,7 @@
+anchor_params:
+  deploy_user: &deploy_user deploy
+  deploy_pass: &deploy_pass deploy
+
 mysql:
   # *If MYSQL_RANDOM_ROOT_PASSWORD is set to "yes", the password will be displayed on the standard output.
   #MYSQL_RANDOM_ROOT_PASSWORD: yes
@@ -5,6 +9,19 @@ mysql:
   MYSQL_USER: example
   MYSQL_PASSWORD: example
   MYSQL_DATABASE: example
+
+tomcat:
+  container_base_image: openjdk:11
+  tomcat_major_version: 9
+  tomcat_download_url: https://downloads.apache.org/tomcat/tomcat-{{tomcat_major_version}}/
+  tomcat_catalina_home: /usr/local/tomcat
+  tomcat_port: 8080
+  # *After that optional parameters.
+  tomcat_manager_allow_access: 127\\.\\d+\\.\\d+\\.\\d+|::1|0:0:0:0:0:0:0:1|192\\.\\d+\\.\\d+\\.\\d+
+  tomcat_manager_user: admin
+  tomcat_manager_password: root
+  tomcat_deploy_user: *deploy_user
+  tomcat_deploy_password: *deploy_pass
 
 application:
   name: spring-mvc-example

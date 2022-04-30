@@ -1,0 +1,18 @@
+---
+# Playbook to create container image for AP server.
+# *Role is divided because python_interpreter is specified for each connection.
+- name: create container
+  hosts: host
+  roles:
+    - container_create
+
+- name: setup apserver
+  hosts: container
+  roles:
+    - tomcat
+
+- name: create image of container
+  hosts: host
+  roles:
+    - container_commit
+    - container_remove

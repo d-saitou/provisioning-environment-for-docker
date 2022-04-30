@@ -1,0 +1,12 @@
+---
+# This file is replaced by ../../../provison_container.sh with parameters in ../../../config.yml.
+container_base_image: XXXXX
+tomcat_major_version: XXXXX
+tomcat_download_url: XXXXX
+tomcat_catalina_home: XXXXX
+tomcat_port: XXXXX
+tomcat_manager_allow_access: XXXXX
+tomcat_manager_user: XXXXX
+tomcat_manager_password: XXXXX
+tomcat_deploy_user: XXXXX
+tomcat_deploy_password: XXXXX

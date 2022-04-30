@@ -24,6 +24,20 @@ services:
     #    target: /etc/mysql/conf.d/my.cnf
     #    mode: 0440
 
+  apserver:
+    image: apserver
+    container_name: apserver
+    hostname: apserver
+    #restart: always
+    stdin_open: false
+    tty: true
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      - dbserver
+
 networks:
   app-network:
     driver: bridge

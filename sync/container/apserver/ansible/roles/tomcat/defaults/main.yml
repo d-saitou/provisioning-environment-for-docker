@@ -1,0 +1,16 @@
+---
+# *See <playbook directory>/group_vars/all for the following parameters.
+#tomcat_major_version: XXXXX
+#tomcat_download_url: XXXXX
+#tomcat_catalina_home: XXXXX
+#tomcat_port: XXXXX
+#tomcat_manager_allow_access: XXXXX
+#tomcat_manager_user: XXXXX
+#tomcat_manager_password: XXXXX
+#tomcat_deploy_user: XXXXX
+#tomcat_deploy_password: XXXXX
+tomcat_apps_to_disabled:
+  list:
+    - docs
+    - examples
+    - host-manager

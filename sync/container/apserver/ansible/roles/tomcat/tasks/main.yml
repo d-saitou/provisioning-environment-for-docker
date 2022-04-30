@@ -1,0 +1,13 @@
+---
+- name: get the latest version number of Tomcat
+  shell: 'curl -Ls {{ tomcat_download_url }} | grep -Eo "<a.*>(.*?)<\/a>" | sed -e "s/<[^>]*>//g" | grep v{{ tomcat_major_version }}. | sed "s/\///g" | sed -e "s/v//g" | tail -1'
+  register: tomcat_version_tmp
+  changed_when: no
+  args:
+    warn: false
+
+- block:
+  - include_tasks: install.yml
+  - include_tasks: config.yml
+  vars:
+    tomcat_version: '{{ tomcat_version_tmp.stdout }}'

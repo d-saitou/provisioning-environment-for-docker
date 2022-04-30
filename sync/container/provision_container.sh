@@ -21,7 +21,6 @@ readonly CTR_DIR="${HOME}/container"
 readonly LOG_DIR="${CTR_DIR}/log"
 readonly LOG_FILE="${LOG_DIR}/provision.$(date +"%Y%m%d%H%M%S").log"
 readonly TIMEZONE="$(timedatectl | grep 'Time zone:' | awk '{print $3}')"
-echo "TIMEZONE=${TIMEZONE}"
 
 function print_log() {
   printf "$(date +"%Y-%m-%d %T") ${@}\n"
@@ -58,6 +57,10 @@ function provision() {
   configure_dbserver_container
   [[ ${?} -ne ${OK} ]] && return ${NG}
 
+  print_label 'configure apserver container'
+  configure_apserver_container
+  [[ ${?} -ne ${OK} ]] && return ${NG}
+
   print_label 'create containers'
   docker compose -f ${CTR_DIR}/compose.yml up -d
   [[ ${?} -ne ${OK} ]] && return ${NG}
@@ -67,6 +70,7 @@ function provision() {
     print_label 'add aliases to .bashrc'
     echo "# CONTAINER PROVISIONING BLOCK START" >>~/.bashrc
     echo "alias dbserver-bash='docker exec -it dbserver /bin/bash'" >>~/.bashrc
+    echo "alias apserver-bash='docker exec -it apserver /bin/bash'" >>~/.bashrc
     echo "# CONTAINER PROVISIONING BLOCK END" >>~/.bashrc
   fi
   return ${OK}
@@ -107,6 +111,31 @@ function configure_dbserver_container() {
     rm -rf /tmp/${app_name}
   fi
   return ${OK}
+}
+
+#######################################
+# Configure the apserver container.
+# Globals:
+#   CTR_DIR, OK, NG
+# Arguments:
+#   None
+# Returns:
+#   Command return code
+#######################################
+function configure_apserver_container() {
+  echo 'create ansible group_vars file...'
+  yq -y .tomcat ${CTR_DIR}/config.yml >${CTR_DIR}/apserver/ansible/group_vars/all
+  [[ ${?} -ne ${OK} ]] && return ${NG}
+
+  # Note:
+  #  To configure the apserver manager as desired,
+  #  use Ansible instead of the official Tomcat Dockerfile to create a container image.
+  echo 'create a container image for AP server using ansible...'
+  cd ${CTR_DIR}/apserver/ansible
+  ansible-playbook -i hosts site.yml
+  local rc=${?}
+  cd - >/dev/null
+  return ${rc}
 }
 
 #######################################

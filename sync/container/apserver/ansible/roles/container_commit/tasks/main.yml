@@ -1,0 +1,14 @@
+---
+- name: create image of container
+  shell: >
+    /usr/bin/docker \
+      commit \
+      -c 'ENV CATALINA_HOME {{ tomcat_catalina_home }}' \
+      -c 'ENV PATH $CATALINA_HOME/bin:$PATH' \
+      -c 'EXPOSE {{ tomcat_port }}' \
+      -c 'CMD ["catalina.sh", "run"]' \
+      -c 'WORKDIR $CATALINA_HOME' \
+      {{ item }} \
+      {{ item }}
+  with_items:
+    - '{{ groups.container }}'

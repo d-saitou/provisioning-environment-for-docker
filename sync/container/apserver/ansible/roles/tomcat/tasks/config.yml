@@ -1,0 +1,74 @@
+---
+- name: create backup directory for default application
+  file:
+    path: '{{ tomcat_catalina_home }}/webapps.dist'
+    state: directory
+    mode: 0755
+
+- name: copy default application directory
+  copy:
+    remote_src: true
+    src: '{{ tomcat_catalina_home }}/webapps/{{ item }}'
+    dest: '{{ tomcat_catalina_home }}/webapps.dist'
+  with_items: '{{ tomcat_apps_to_disabled.list }}'
+
+- name: remove default application directory
+  file:
+    path: '{{ tomcat_catalina_home }}/webapps/{{ item }}'
+    state: absent
+  with_items: '{{ tomcat_apps_to_disabled.list }}'
+
+- name: backup server.xml
+  copy:
+    remote_src: true
+    src: '{{ tomcat_catalina_home }}/conf/server.xml'
+    dest: '{{ tomcat_catalina_home }}/conf/server.xml.org'
+
+- name: set access to Tomcat manager context
+  replace:
+    dest: '{{ tomcat_catalina_home }}/conf/server.xml'
+    regexp: '\"8080\"'
+    replace: '"{{ tomcat_port }}"'
+
+- name: backup Tomcat manager context
+  copy:
+    remote_src: true
+    src: '{{ tomcat_catalina_home }}/webapps/manager/META-INF/context.xml'
+    dest: '{{ tomcat_catalina_home }}/webapps/manager/META-INF/context.xml.org'
+  when: tomcat_manager_allow_access is defined
+
+- name: set access to Tomcat manager context
+  replace:
+    dest: '{{ tomcat_catalina_home }}/webapps/manager/META-INF/context.xml'
+    regexp: 'allow=\".*\"'
+    replace: 'allow="{{ tomcat_manager_allow_access }}"'
+  when: tomcat_manager_allow_access is defined
+
+- name: backup tomcat-users.xml
+  copy:
+    remote_src: true
+    src: '{{ tomcat_catalina_home }}/conf/tomcat-users.xml'
+    dest: '{{ tomcat_catalina_home }}/conf/tomcat-users.xml.orig'
+  when: >
+    (tomcat_manager_user is defined and tomcat_manager_password is defined) or
+    (tomcat_deploy_user is defined and tomcat_deploy_password is defined)
+
+- name: set Tomcat manager user
+  blockinfile:
+    path: '{{ tomcat_catalina_home }}/conf/tomcat-users.xml'
+    block: |2
+        <role rolename="manager-gui"/>
+        <user username="{{ tomcat_manager_user }}" password="{{ tomcat_manager_password }}" roles="manager-gui"/>
+    insertbefore: '^</tomcat-users>.*'
+    marker: '<!-- {mark} ANSIBLE MANAGED BLOCK [tomcat magager role] -->'
+  when: tomcat_manager_user is defined and tomcat_manager_password is defined
+
+- name: set Tomcat manager deployment user
+  blockinfile:
+    path: '{{ tomcat_catalina_home }}/conf/tomcat-users.xml'
+    block: |2
+        <role rolename="manager-script"/>
+        <user username="{{ tomcat_deploy_user }}" password="{{ tomcat_deploy_password }}" roles="manager-script"/>
+    insertbefore: '^</tomcat-users>.*'
+    marker: '<!-- {mark} ANSIBLE MANAGED BLOCK [tomcat deploy role] -->'
+  when: tomcat_deploy_user is defined and tomcat_deploy_password is defined

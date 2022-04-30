@@ -1,0 +1,25 @@
+---
+- name: download Tomcat archive file
+  get_url:
+    url: '{{ tomcat_download_url }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz'
+    dest: '/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz'
+
+- name: create Tomcat home directory
+  file:
+    path: '{{ tomcat_catalina_home }}'
+    state: directory
+    mode: 0755
+
+- name: install Tomcat
+  unarchive:
+    remote_src: yes
+    src: '/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz'
+    dest: '{{ tomcat_catalina_home }}'
+    mode: 0755
+    extra_opts:
+      - --strip-components=1
+
+- name: remove Tomcat archive file
+  file:
+    path: '/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz'
+    state: absent

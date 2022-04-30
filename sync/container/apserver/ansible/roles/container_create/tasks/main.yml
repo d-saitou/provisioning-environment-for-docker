@@ -1,0 +1,9 @@
+---
+- name: create container
+  docker_container:
+    name: '{{ item }}'
+    image: '{{ container_base_image }}'
+    state: started
+    tty: yes
+  with_items:
+    - '{{ groups.container }}'
