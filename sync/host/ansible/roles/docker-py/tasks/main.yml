@@ -1,0 +1,7 @@
+---
+- name: install docker-py
+  pip:
+    name: docker-py
+    executable: pip3
+    state: latest
+  tags: [ 'docker-py' ]

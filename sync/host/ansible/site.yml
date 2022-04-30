@@ -6,5 +6,6 @@
     - common
     #- desktop
     - docker
+    - docker-py
     - jq
     - yq
