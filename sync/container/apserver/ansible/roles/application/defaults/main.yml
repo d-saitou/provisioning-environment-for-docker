@@ -1,0 +1,12 @@
+---
+# *See <playbook directory>/group_vars/all for the following parameters.
+#app_home_path: XXXXX
+#app_data_path: XXXXX
+#app_logs_path: XXXXX
+#app_conf_path: XXXXX
+#app_db_server: XXXXX
+#app_db_name: XXXXX
+#app_db_user: XXXXX
+#app_db_pass: XXXXX
+#app_smtp_server: XXXXX
+#tomcat_catalina_home: XXXXX

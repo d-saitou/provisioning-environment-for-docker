@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE logback>
+<!-- configuration file for LogBack (slf4J implementation) -->
+<configuration scan="true" scanPeriod="30 seconds" debug="false">
+
+<!-- Properties -->
+
+	<property file="{{ app_conf_path }}/application.properties" />
+
+<!-- Appenders -->
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<!-- <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern> -->
+			<pattern>%date %-5level [%thread] %logger{128} [%file:%line %method] %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!--
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<file>${logback.logDirectory}/${logback.fileBaseName}.log</file>
+		<prudent>true</prudent>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%date %-5level [%thread] %logger{128} [%file:%line %method] %msg%n</pattern>
+		</encoder>
+	</appender>
+	-->
+
+	<appender name="ROLLINGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- <append>true</append> -->
+		<prudent>true</prudent>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logback.logDirectory}/${logback.fileBaseName}.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>${logback.TimeBasedRollingPolicy.maxHistory}</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%date %-5level [%thread] %logger{128} [%file:%line %method] %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<smtpHost>${javax.mail.smtpHost}</smtpHost>
+		<smtpPort>${javax.mail.smtpPort}</smtpPort>
+		<!-- <SSL>${javax.mail.SSL}</SSL> * yahoo mail -->
+		<STARTTLS>${javax.mail.startTLS}</STARTTLS> <!-- * gmail -->
+		<username>${javax.mail.username}</username>
+		<password>${javax.mail.password}</password>
+		<to>${logback.mail.toAddr}</to>
+		<from>${javax.mail.fromAddr}</from>
+		<subject>${logback.mail.subject}</subject>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%date %-5level [%thread] %logger{128} [%file:%line %method] %msg%n</pattern>
+		</layout>
+		<asynchronousSending>true</asynchronousSending>
+	</appender>
+
+	<!--
+	<appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="FILE"/>
+	</appender>
+	-->
+
+	<appender name="ASYNC_ROLLINGFILE" class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="ROLLINGFILE"/>
+	</appender>
+
+<!-- Loggers -->
+	<!-- * level:"trace" or "debug" or "info" or "warn" or "error" or "all" or "off" -->
+
+	<root level="debug">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="ASYNC_ROLLINGFILE" />
+		<appender-ref ref="EMAIL" />
+	</root>
+
+	<!-- * To confirm the transaction status, enable the settings in the following two lines.
+	<logger name="org.springframework.orm.jpa" level="debug" />
+	<logger name="org.springframework.transaction" level="info" />
+	-->
+	<logger name="_org.springframework" level="warn" />
+	<logger name="org.springframework" level="warn" />
+	<logger name="org.thymeleaf" level="warn" />
+	<logger name="org.hibernate" level="warn" />
+	<logger name="org.jboss" level="warn" />
+	<logger name="com.zaxxer" level="warn" />
+	<logger name="com.example.springmvc" level="debug" />
+
+<!-- Others Setting-->
+
+	<!-- <jmxConfigurator/> -->
+
+</configuration>

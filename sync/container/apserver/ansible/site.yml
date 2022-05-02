@@ -10,6 +10,7 @@
   hosts: container
   roles:
     - tomcat
+    - application
 
 - name: create image of container
   hosts: host

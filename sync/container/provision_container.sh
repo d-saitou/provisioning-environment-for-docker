@@ -5,6 +5,7 @@
 # - python3
 # - ansible (+jinja2)
 # - docker (+compose plugin)
+# - docker-py
 # - yq
 # - ./tool/jinja2_template_converter.py
 # This script outputs error messages related to provisioning to stdout and log file.
@@ -97,10 +98,10 @@ function configure_dbserver_container() {
   [[ ${?} -ne ${OK} ]] && return ${NG}
 
   echo 'get sql files such as ddl and dmls...'
-  local app_init_db_dir=$(yq -r .application.init_db_dir ${CTR_DIR}/config.yml)
+  local app_init_db_dir=$(yq -r .application.app_init_db_dir ${CTR_DIR}/config.yml)
   if [[ -n "${app_init_db_dir}}" ]]; then
-    local app_name=$(yq -r .application.name ${CTR_DIR}/config.yml)
-    local app_git_url=$(yq -r .application.git_url ${CTR_DIR}/config.yml)
+    local app_name=$(yq -r .application.app_name ${CTR_DIR}/config.yml)
+    local app_git_url=$(yq -r .application.app_git_url ${CTR_DIR}/config.yml)
 
     git clone ${app_git_url} /tmp/${app_name}
     [[ ${?} -ne ${OK} ]] && return ${NG}
@@ -124,7 +125,9 @@ function configure_dbserver_container() {
 #######################################
 function configure_apserver_container() {
   echo 'create ansible group_vars file...'
-  yq -y .tomcat ${CTR_DIR}/config.yml >${CTR_DIR}/apserver/ansible/group_vars/all
+  yq -y .application ${CTR_DIR}/config.yml >${CTR_DIR}/apserver/ansible/group_vars/all
+  [[ ${?} -ne ${OK} ]] && return ${NG}
+  yq -y .tomcat ${CTR_DIR}/config.yml >>${CTR_DIR}/apserver/ansible/group_vars/all
   [[ ${?} -ne ${OK} ]] && return ${NG}
 
   # Note:

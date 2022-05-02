@@ -1,0 +1,29 @@
+---
+# *Application is deployed by the cdserver container.
+- name: create application home directories
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+     - '{{ app_home_path }}'
+     - '{{ app_conf_path }}'
+     - '{{ app_data_path }}'
+     - '{{ app_logs_path }}'
+
+- name: copy application.properties template
+  template:
+    src: 'application.properties.j2'
+    dest: '{{ app_conf_path }}/application.properties'
+    mode: 0644
+
+- name: copy logback.xml template
+  template:
+    src: 'logback.xml.j2'
+    dest: '{{ app_conf_path }}/logback.xml'
+    mode: 0644
+
+- name: copy setenv.sh template
+  template:
+    src: 'setenv.sh.j2'
+    dest: '{{ tomcat_catalina_home }}/bin/setenv.sh'
+    mode: 0755

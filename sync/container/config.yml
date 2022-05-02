@@ -1,17 +1,35 @@
 anchor_params:
+  db_name: &db_name example
+  db_username: &db_user example
+  db_password: &db_pass example
   deploy_user: &deploy_user deploy
   deploy_pass: &deploy_pass deploy
 
+# container configuration: dbserver
 mysql:
   # *If MYSQL_RANDOM_ROOT_PASSWORD is set to "yes", the password will be displayed on the standard output.
   #MYSQL_RANDOM_ROOT_PASSWORD: yes
   MYSQL_ROOT_PASSWORD: root
-  MYSQL_USER: example
-  MYSQL_PASSWORD: example
-  MYSQL_DATABASE: example
+  MYSQL_USER: *db_name
+  MYSQL_PASSWORD: *db_user
+  MYSQL_DATABASE: *db_pass
 
-tomcat:
+# container configuration: apserver
+application:
   container_base_image: openjdk:11
+  app_name: spring-mvc-example
+  app_git_url: https://github.com/d-saitou/spring-mvc-example.git
+  app_init_db_dir: ./data/db
+  app_home_path: /app
+  app_data_path: /app/data
+  app_logs_path: /app/logs
+  app_conf_path: /app/conf
+  app_db_server: dbserver
+  app_db_name: *db_name
+  app_db_user: *db_user
+  app_db_pass: *db_pass
+  app_smtp_server: smtpserver
+tomcat:
   tomcat_major_version: 9
   tomcat_download_url: https://downloads.apache.org/tomcat/tomcat-{{tomcat_major_version}}/
   tomcat_catalina_home: /usr/local/tomcat
@@ -22,8 +40,3 @@ tomcat:
   tomcat_manager_password: root
   tomcat_deploy_user: *deploy_user
   tomcat_deploy_password: *deploy_pass
-
-application:
-  name: spring-mvc-example
-  git_url: https://github.com/d-saitou/spring-mvc-example.git
-  init_db_dir: ./data/db

@@ -37,6 +37,9 @@ services:
       - app-network
     depends_on:
       - dbserver
+    volumes:
+      - application-data:/app/data
+      - application-log:/app/logs
 
 networks:
   app-network:
@@ -45,6 +48,8 @@ networks:
 volumes:
   mysql-data:
   mysql-log:
+  application-data:
+  application-log:
 
 #configs:
 #  my_cnf:

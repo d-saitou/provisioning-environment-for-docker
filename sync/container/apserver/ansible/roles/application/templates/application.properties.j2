@@ -1,0 +1,62 @@
+# Application
+application.datadir = {{ app_data_path }}
+application.charset = UTF-8
+application.form.MaxListSize = 512
+web.resource.cachePeriod = 0
+web.screen.TaskList.pageSize = 20
+
+# Data source *"jdbc.database" is also used in batch files and scripts for DDL execution.
+jdbc.driverClassName = com.mysql.cj.jdbc.Driver
+jdbc.host = {{ app_db_server }}
+jdbc.database = {{ app_db_name }}
+# Connector/J 8.0.22 or earlier.
+#jdbc.url = jdbc:mysql://${jdbc.host}/${jdbc.database}?rewriteBatchedStatements=true&serverTimezone=JST
+jdbc.url = jdbc:mysql://${jdbc.host}/${jdbc.database}?rewriteBatchedStatements=true&connectionTimeZone=SERVER
+jdbc.username = {{ app_db_user }}
+jdbc.password = {{ app_db_pass }}
+hikariCP.maximumPoolSize = 100
+hikariCP.minimumIdle = 20
+hikariCP.idleTimeout = 600000
+hikariCP.connectionTestQuery = SELECT 1
+hikariCP.leakDetectionThreshold = 60000
+
+# Hibernate
+hibernate.dialect = org.hibernate.dialect.MySQL8Dialect
+hibernate.hbm2ddl.auto = validate
+hibernate.show_sql = true
+hibernate.format_sql = false
+hibernate.connection.handling_mode = DELAYED_ACQUISITION_AND_HOLD
+hibernate.jdbc.fetch_size = 400
+hibernate.jdbc.batch_size = 200
+hibernate.order_inserts = true
+hibernate.order_updates = true
+
+# Mail
+javax.mail.smtpHost = {{ app_smtp_server }}
+javax.mail.smtpPort = 1025
+javax.mail.startTLS = false
+javax.mail.username = XXXXXXXX@test.com
+javax.mail.password = XXXXXXXX
+javax.mail.fromAddr = ${javax.mail.username}
+javax.mail.charset = ${application.charset}
+javax.mail.encode = base64
+javax.mail.connectionTimeout = 30000
+javax.mail.timeout = 30000
+javax.mail.debug = false
+
+# Logger (logback)
+logback.logDirectory = {{ app_logs_path }}
+logback.fileBaseName = springMvcExample
+logback.TimeBasedRollingPolicy.maxHistory = 30
+logback.mail.toAddr = ${javax.mail.username}
+logback.mail.subject = Spring Mvc Example Mail (Logback SMTPAppender)
+
+# Content
+content.fileDownload.excelFileName = taskdata.xlsx
+
+# Task schedule
+schedule.execute = true
+schedule.fixedRateTask.schedule.fixedRate = 1800000
+schedule.initialAndFixedDelayTask.schedule.initialDelay = 60000
+schedule.initialAndFixedDelayTask.schedule.fixedDelay = 1800000
+schedule.cronTask.schedule.cron = 0 */30 * * * *
